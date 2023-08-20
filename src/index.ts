@@ -4,6 +4,7 @@ import path from "node:path";
 import process from "node:process";
 import { generateAudio } from "./libs/generateAudio";
 import { getAudioDurationInSeconds } from "./libs/getAudioDurationInSeconds";
+import { convertWavToM4a } from "./libs/convertWavToM4a.js";
 
 const fastify = Fastify({
   logger: true,
@@ -25,7 +26,9 @@ fastify.post("/audio", async function handler(request) {
   );
   fs.writeFileSync(filePath, audio);
 
-  return { duration, filePath };
+  const m4aPath = await convertWavToM4a(filePath);
+
+  return { duration, filePath, m4aPath };
 });
 
 try {
