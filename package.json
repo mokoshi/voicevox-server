@@ -1,0 +1,24 @@
+{
+  "name": "voicevox-server",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^4.21.0"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.2",
+    "@types/node": "^20.5.1",
+    "tsx": "^3.12.7",
+    "typescript": "^5.1.6"
+  },
+  "volta": {
+    "node": "18.17.1"
+  }
+}
