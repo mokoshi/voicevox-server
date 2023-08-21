@@ -18,7 +18,6 @@ export function convertWavToM4a_Stream(streamIn: Readable): Writable {
    * mp4 はオプションを付与してやれば先頭から再生可能になるっぽい？
    * https://trac.ffmpeg.org/wiki/Encode/AAC#ProgressiveDownload
    */
-  /**
   return ffmpeg(streamIn)
     .addOutputOptions(
       "-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov"
@@ -26,7 +25,6 @@ export function convertWavToM4a_Stream(streamIn: Readable): Writable {
     .audioCodec("aac")
     .format("mp4")
     .pipe();
-  */
 
   /**
    * adts でも良いのか...？
