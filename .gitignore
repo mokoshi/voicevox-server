@@ -2,6 +2,7 @@ node_modules
 
 .env
 sample.json
-output/*.wav
+!output/.gitkeep
+output/*
 
 .DS_Store

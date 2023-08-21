@@ -13,6 +13,9 @@ import {
   convertWavToM4a_Stream,
 } from "./audio/convertWavToM4a.js";
 import { waitForFinish } from "./utils/waitForFinish";
+import { PassThrough } from "node:stream";
+import { FsStorage } from "./storage/fs";
+import { S3Storage } from "./storage/s3";
 
 const fastify = Fastify({
   logger: true,
@@ -29,12 +32,18 @@ fastify.post("/audio", async function handler(request) {
   const text = (request.body as { text: string }).text;
   const audio = await generateAudio(text);
 
-  const duration = getAudioDurationInSeconds(audio);
-  const filePath = path.join(OUTPUT_DIR, `audio-${new Date().getTime()}.wav`);
-  fs.writeFileSync(filePath, audio);
+  const filename = `audio-${new Date().getTime()}-stream.m4a`;
+  const filepath = path.join(OUTPUT_DIR, filename);
+  FsStorage.writeSync(filepath, audio);
 
-  const m4aPath = await convertWavToM4a(filePath);
-  return { duration, filePath, m4aPath };
+  const m4aPath = await convertWavToM4a(filepath);
+
+  await S3Storage.writeAsync(filename, fs.readFileSync(m4aPath));
+  const url = await S3Storage.getObjectUrl(filename);
+
+  const duration = getAudioDurationInSeconds(audio);
+
+  return { duration, url };
 });
 
 /**
@@ -48,18 +57,26 @@ fastify.post("/audio-stream", async function handler(request) {
 
   const convertStream = convertWavToM4a_Stream(audioStream);
 
-  const filePath = path.join(
-    OUTPUT_DIR,
-    `audio-${new Date().getTime()}-stream.m4a`
-  );
-  const saveStream = convertStream.pipe(fs.createWriteStream(filePath));
+  const saveStream = new PassThrough();
+  const filename = `audio-${new Date().getTime()}-stream.m4a`;
+  if (false) {
+    saveStream.pipe(
+      FsStorage.createWriteStream(path.join(OUTPUT_DIR, filename))
+    );
+  }
+  if (true) {
+    saveStream.pipe(S3Storage.createWriteStream(filename));
+  }
+  convertStream.pipe(saveStream);
 
   const [duration] = await Promise.all([
     getAudioDurationInSeconds_Stream(audioStream),
     waitForFinish(saveStream),
   ]);
 
-  return { duration };
+  const url = await S3Storage.getObjectUrl(filename);
+
+  return { duration, url };
 });
 
 try {
