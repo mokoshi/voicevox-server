@@ -16,6 +16,7 @@ import { waitForFinish } from "./utils/waitForFinish";
 import { PassThrough } from "node:stream";
 import { FsStorage } from "./storage/fs";
 import { S3Storage } from "./storage/s3";
+import { pushAudioMessage } from "./line/pushAudioMessage";
 
 const fastify = Fastify({
   logger: true,
@@ -42,6 +43,10 @@ fastify.post("/audio", async function handler(request) {
   const url = await S3Storage.getObjectUrl(filename);
 
   const duration = getAudioDurationInSeconds(audio);
+
+  if (true) {
+    await pushAudioMessage(url, text, duration);
+  }
 
   return { duration, url };
 });
@@ -75,6 +80,10 @@ fastify.post("/audio-stream", async function handler(request) {
   ]);
 
   const url = await S3Storage.getObjectUrl(filename);
+
+  if (true) {
+    await pushAudioMessage(url, text, duration);
+  }
 
   return { duration, url };
 });
