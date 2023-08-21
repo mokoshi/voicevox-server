@@ -2,15 +2,15 @@ import Fastify from "fastify";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import { generateAudio, generateAudio_Stream } from "./libs/generateAudio";
+import { generateAudio, generateAudio_Stream } from "./audio/generateAudio";
 import {
   getAudioDurationInSeconds,
   getAudioDurationInSeconds_Stream,
-} from "./libs/getAudioDurationInSeconds";
+} from "./audio/getAudioDurationInSeconds";
 import {
   convertWavToM4a,
   convertWavToM4a_Stream,
-} from "./libs/convertWavToM4a.js";
+} from "./audio/convertWavToM4a.js";
 import { waitForFinish } from "./utils/waitForFinish";
 
 const fastify = Fastify({

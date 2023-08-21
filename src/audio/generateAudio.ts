@@ -10,7 +10,7 @@ const ずんだもん = {
   ヒソヒソ: 38,
 };
 
-const speaker = ずんだもん.ノーマル;
+const speaker = ずんだもん.ささやき;
 
 export async function generateAudio(text: string): Promise<Buffer> {
   const audioQueryResponse = await axios.post(
