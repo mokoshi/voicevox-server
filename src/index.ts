@@ -1,3 +1,4 @@
+import "dotenv/config";
 import Fastify from "fastify";
 import fs from "node:fs";
 import path from "node:path";
@@ -17,10 +18,7 @@ const fastify = Fastify({
   logger: true,
 });
 
-// 後で環境変数化
-const env = {
-  OUTPUT_DIR: `${process.cwd()}/output`,
-};
+const OUTPUT_DIR = process.env.OUTPUT_DIR ?? `${process.cwd()}/output`;
 
 /**
  * テキストから音声を生成する
@@ -32,10 +30,7 @@ fastify.post("/audio", async function handler(request) {
   const audio = await generateAudio(text);
 
   const duration = getAudioDurationInSeconds(audio);
-  const filePath = path.join(
-    env.OUTPUT_DIR,
-    `audio-${new Date().getTime()}.wav`
-  );
+  const filePath = path.join(OUTPUT_DIR, `audio-${new Date().getTime()}.wav`);
   fs.writeFileSync(filePath, audio);
 
   const m4aPath = await convertWavToM4a(filePath);
@@ -54,7 +49,7 @@ fastify.post("/audio-stream", async function handler(request) {
   const convertStream = convertWavToM4a_Stream(audioStream);
 
   const filePath = path.join(
-    env.OUTPUT_DIR,
+    OUTPUT_DIR,
     `audio-${new Date().getTime()}-stream.m4a`
   );
   const saveStream = convertStream.pipe(fs.createWriteStream(filePath));
