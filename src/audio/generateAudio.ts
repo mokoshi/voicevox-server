@@ -12,14 +12,16 @@ const ずんだもん = {
 
 const speaker = ずんだもん.ノーマル;
 
+const VOICEVOX_URL = process.env.VOICEVOX_URL;
+
 export async function generateAudio(text: string): Promise<Buffer> {
   const audioQueryResponse = await axios.post(
-    `http://127.0.0.1:50021/audio_query?speaker=${speaker}&text=${text}`
+    `${VOICEVOX_URL}/audio_query?speaker=${speaker}&text=${text}`
   );
   const audioQuery = audioQueryResponse.data;
 
   const synthesisResponse = await axios.post(
-    `http://127.0.0.1:50021/synthesis?speaker=${speaker}`,
+    `${VOICEVOX_URL}/synthesis?speaker=${speaker}`,
     audioQuery,
     { responseType: "arraybuffer" }
   );
@@ -29,12 +31,12 @@ export async function generateAudio(text: string): Promise<Buffer> {
 
 export async function generateAudio_Stream(text: string): Promise<Readable> {
   const audioQueryResponse = await axios.post(
-    `http://127.0.0.1:50021/audio_query?speaker=${speaker}&text=${text}`
+    `${VOICEVOX_URL}/audio_query?speaker=${speaker}&text=${text}`
   );
   const audioQuery = audioQueryResponse.data;
 
   const synthesisResponse = await axios.post(
-    `http://127.0.0.1:50021/synthesis?speaker=${speaker}`,
+    `${VOICEVOX_URL}/synthesis?speaker=${speaker}`,
     audioQuery,
     { responseType: "stream" }
   );
